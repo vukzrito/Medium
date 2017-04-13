@@ -12,6 +12,9 @@ public class Article {
     private Date datePublished;
     private String imageUrl;
 
+    public Article(String title){
+        this.title = title;
+    }
     public String getId() {
         return id;
     }
