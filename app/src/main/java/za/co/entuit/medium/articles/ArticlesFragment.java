@@ -28,11 +28,21 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticlesContract.UserActionsListener userActionsListener;
     private ArticlesAdapter articlesAdapter;
+    private ArticleItemListener articleItemListener;
+
+    private interface ArticleItemListener {
+        void onArticleClicked(Article article);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        articleItemListener = new ArticleItemListener() {
+            @Override
+            public void onArticleClicked(Article article) {
 
+            }
+        };
         View rootView = inflater.inflate(R.layout.fragment_articles, container, false);
         userActionsListener = new ArticlesPresenter(this, new ArticlesRepositoryImpl());
         articlesAdapter =new ArticlesAdapter();
@@ -46,6 +56,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.articles_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(articlesAdapter);
+
 
         return rootView;
     }

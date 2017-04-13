@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import za.co.entuit.medium.R;
@@ -33,6 +35,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Article article = articles.get(position);
         holder.titleTextView.setText(article.getTitle());
+        Picasso.with(context).load("https://upload.wikimedia.org/wikipedia/commons/8/87/Jacob_Zuma_2014_%28cropped%29.jpg")
+                .error(R.drawable.ic_my_location_black_24dp)
+                .fit()
+                .into(holder.imageView);
     }
 
     @Override
