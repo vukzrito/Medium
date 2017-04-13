@@ -15,6 +15,7 @@ import java.util.List;
 
 import za.co.entuit.medium.R;
 import za.co.entuit.medium.data.Article;
+import za.co.entuit.medium.data.ArticlesAdapter;
 import za.co.entuit.medium.data.ArticlesRepositoryImpl;
 
 /**
@@ -26,6 +27,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticlesContract.UserActionsListener userActionsListener;
+    private ArticlesAdapter articlesAdapter;
 
     @Nullable
     @Override
@@ -33,6 +35,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
 
         View rootView = inflater.inflate(R.layout.fragment_articles, container, false);
         userActionsListener = new ArticlesPresenter(this, new ArticlesRepositoryImpl());
+        articlesAdapter =new ArticlesAdapter();
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.articles_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -42,18 +45,25 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
         });
         recyclerView = (RecyclerView) rootView.findViewById(R.id.articles_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(articlesAdapter);
 
         return rootView;
     }
 
     @Override
     public void showArticles(List<Article> articleList) {
+            articlesAdapter.replaceData(articleList);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        userActionsListener.loadArticles(false);
     }
 
     @Override
     public void showProgressIndicator(boolean active) {
-        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setRefreshing(active);
     }
 
     @Override
