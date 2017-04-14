@@ -4,17 +4,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.io.IOException;
 
 import za.co.entuit.medium.MainActivity;
 import za.co.entuit.medium.R;
@@ -25,12 +21,18 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * Created by RVukela on 2017/04/14.
  */
 
-public class StreamFragment extends Fragment {
+public class StreamFragment extends Fragment implements StreamContract.View {
 
+
+    private StreamContract.UserActionsListener userActionsListener;
+    private NotificationManager notificationManager;
+    private static final int STREAM_NOTIFICATION_ID =0;
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stream, container, false);
+        userActionsListener = new StreamPresenter(this);
 
         return rootView;
     }
@@ -38,26 +40,40 @@ public class StreamFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String url = "http://capeant.antfarm.co.za:8000/yarona"; // your URL here
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });// might take long! (for buffering, etc)
-        } catch (IOException e) {
-            Log.e("Stream Error","Error starting stream!!!",e );
-        }
+        userActionsListener.play();
 
-        mediaPlayer.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void showErrorMessage(String message) {
+        Snackbar.make(getView(), message,Snackbar.LENGTH_INDEFINITE).setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userActionsListener.play();
+            }
+        }).show();
+    }
+
+    @Override
+    public void notifyStreamStarted() {
         initNotificationBar();
+    }
 
+    @Override
+    public void notifyStreamStopped() {
+        clearStreamNotifications();
+    }
 
+    @Override
+    public void clearStreamNotifications() {
+        if(notificationManager!=null){
+            notificationManager.cancel(STREAM_NOTIFICATION_ID);
+        }
     }
 
     void initNotificationBar(){
@@ -67,15 +83,16 @@ public class StreamFragment extends Fragment {
                 notIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = new Notification.Builder(getContext());
         builder.setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.logo)
                 .setOngoing(true)
                 .setContentTitle("Medium")
                 .setContentText("Now playing");
+
         Notification notification = builder.build();
-        NotificationManager notificationManager = (NotificationManager)getActivity()
+        notificationManager = (NotificationManager)getActivity()
                 .getSystemService(NOTIFICATION_SERVICE);
 
-
-        notificationManager.notify(0, notification);
+        notificationManager.notify(STREAM_NOTIFICATION_ID, notification);
     }
+
 }
