@@ -12,23 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import za.co.entuit.medium.articles.ArticlesFragment;
+import za.co.entuit.medium.stream.StreamFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
+    private Fragment[] tabs = new Fragment[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -89,10 +74,21 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             switch (position){
-                case 0 : return new Fragment();
-                case 1 : return  new ArticlesFragment();
+                case 0 :
+                    if(tabs[position]==null){
+                      tabs[position] = new StreamFragment();
+                    }
+                    break;
+
+                case 1 :
+                    if(tabs[position]==null){
+                        tabs[position] = new ArticlesFragment();
+                    }
+                    break;
                 default: return new Fragment();
             }
+
+            return tabs[position];
         }
 
         @Override
