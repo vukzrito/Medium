@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import za.co.entuit.medium.R;
+import za.co.entuit.medium.articles.ArticlesFragment;
 
 /**
  * Created by RVukela on 2017/04/13.
@@ -22,13 +23,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     private List<Article> articles;
     private Context context;
+    private ArticlesFragment.ArticleItemListener itemClickListener;
+
+    public ArticlesAdapter(ArticlesFragment.ArticleItemListener itemClickListener){
+        this.itemClickListener = itemClickListener;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View articleView = inflater.inflate(R.layout.article_list_item_row, parent,false);
-        return  new ViewHolder(articleView );
+        return  new ViewHolder(articleView,itemClickListener );
     }
 
     @Override
@@ -54,17 +60,27 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         this.notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView titleTextView;
         public ImageView imageView;
 
-        public ViewHolder(View itemView) {
+        private ArticlesFragment.ArticleItemListener itemListener;
+
+        public ViewHolder(View itemView, ArticlesFragment.ArticleItemListener itemClickListener) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.article_list_item_title);
             imageView = (ImageView) itemView.findViewById(R.id.article_list_item_image);
+            this.itemListener = itemClickListener;
+            itemView.setOnClickListener(this);
         }
 
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Article article = articles.get(position);
+            itemListener.onArticleClicked(article);
+        }
     }
 }

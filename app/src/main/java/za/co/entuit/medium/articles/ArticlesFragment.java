@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
     private ArticlesAdapter articlesAdapter;
     private ArticleItemListener articleItemListener;
 
-    private interface ArticleItemListener {
+    public interface ArticleItemListener {
         void onArticleClicked(Article article);
     }
 
@@ -40,12 +41,13 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
         articleItemListener = new ArticleItemListener() {
             @Override
             public void onArticleClicked(Article article) {
-
+                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_LONG).show();
+                showArticleDetail(article.getId());
             }
         };
         View rootView = inflater.inflate(R.layout.fragment_articles, container, false);
         userActionsListener = new ArticlesPresenter(this, new ArticlesRepositoryImpl());
-        articlesAdapter =new ArticlesAdapter();
+        articlesAdapter =new ArticlesAdapter(articleItemListener);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.articles_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
