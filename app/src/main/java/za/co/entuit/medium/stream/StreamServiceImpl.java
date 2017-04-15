@@ -6,15 +6,26 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import static android.media.MediaPlayer.*;
+
 /**
  * Created by RVukela on 2017/04/14.
  */
 
-public class StreamServiceImpl implements StreamService, MediaPlayer.OnPreparedListener{
+public class StreamServiceImpl implements StreamService, OnPreparedListener{
     private static final String ACTION_PLAY = "com.example.action.PLAY";
     private MediaPlayer mediaPlayer = null;
     private static final String url = "http://capeant.antfarm.co.za:8000/yarona";
+    private  OnErrorListener errorListener;
+    private OnBufferingUpdateListener bufferingUpdateListener;
+    private  OnCompletionListener completionListener;
 
+    public StreamServiceImpl(OnErrorListener errorListener, OnBufferingUpdateListener bufferingUpdateListener,
+                             OnCompletionListener completionListener){
+        this.errorListener = errorListener;
+        this.bufferingUpdateListener = bufferingUpdateListener;
+        this.completionListener = completionListener;
+    }
 
     private void shutdown(){
         mediaPlayer.stop();
@@ -24,6 +35,9 @@ public class StreamServiceImpl implements StreamService, MediaPlayer.OnPreparedL
     private void  init(){
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setOnBufferingUpdateListener(bufferingUpdateListener);
+        mediaPlayer.setOnErrorListener(errorListener);
+        mediaPlayer.setOnCompletionListener(completionListener);
         try {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
@@ -54,4 +68,6 @@ public class StreamServiceImpl implements StreamService, MediaPlayer.OnPreparedL
         mediaPlayer.stop();
         callback.onStreamStopped();
     }
+
+
 }

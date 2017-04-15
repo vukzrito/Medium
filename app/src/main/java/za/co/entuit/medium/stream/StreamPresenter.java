@@ -1,5 +1,6 @@
 package za.co.entuit.medium.stream;
 
+import android.media.MediaPlayer;
 import android.util.Log;
 
 /**
@@ -12,21 +13,28 @@ public class StreamPresenter implements StreamContract.UserActionsListener {
     private static final String LOG_TAG = StreamPresenter.class.getCanonicalName();
     private StreamContract.View view;
     private StreamService streamService;
+    private MediaPlayer.OnBufferingUpdateListener bufferingUpdateListener;
+    private MediaPlayer.OnErrorListener errorListener;
+    private  MediaPlayer.OnCompletionListener completionListener;
 
     public StreamPresenter(StreamContract.View view) {
         this.view = view;
-        streamService = new StreamServiceImpl();
+        initListeners();
+        streamService = new StreamServiceImpl(errorListener,bufferingUpdateListener,completionListener);
     }
     @Override
     public void play() {
+        view.showProgressIndicator(true, 0);
         streamService.playStream(new StreamService.StartStreamCallback() {
             @Override
             public void onStreamStarted() {
+               // view.showProgressIndicator(false, 100);
                 view.notifyStreamStarted();
             }
 
             @Override
             public void onError() {
+                view.showProgressIndicator(false, -1);
                 view.showErrorMessage("Unable to connect to stream");
             }
         });
@@ -51,6 +59,37 @@ public class StreamPresenter implements StreamContract.UserActionsListener {
     @Override
     public void shutdown() {
 
+    }
+
+    private void initListeners(){
+        bufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+
+                if(percent ==100){
+                    view.showProgressIndicator(false, percent);
+                }
+            }
+        };
+        errorListener = new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+               if(what == MediaPlayer.MEDIA_ERROR_SERVER_DIED || what == MediaPlayer.MEDIA_ERROR_IO
+                       || what == MediaPlayer.MEDIA_ERROR_TIMED_OUT){
+                   view.showErrorMessage("Error playing stream");
+                   return true;
+               }
+
+             return false;
+            }
+        };
+
+        completionListener = new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                view.showProgressIndicator(false, 100);
+            }
+        };
     }
 
 

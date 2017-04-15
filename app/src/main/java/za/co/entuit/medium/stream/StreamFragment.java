@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 
 import za.co.entuit.medium.MainActivity;
 import za.co.entuit.medium.R;
@@ -27,11 +29,22 @@ public class StreamFragment extends Fragment implements StreamContract.View {
     private StreamContract.UserActionsListener userActionsListener;
     private NotificationManager notificationManager;
     private static final int STREAM_NOTIFICATION_ID =0;
+    private Button btnPlay;
+    private ProgressBar progressBar;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stream, container, false);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.stream_progress_indicator);
+        btnPlay = (Button) rootView.findViewById(R.id.btn_start_stream);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userActionsListener.play();
+            }
+        });
         userActionsListener = new StreamPresenter(this);
 
         return rootView;
@@ -73,6 +86,15 @@ public class StreamFragment extends Fragment implements StreamContract.View {
     public void clearStreamNotifications() {
         if(notificationManager!=null){
             notificationManager.cancel(STREAM_NOTIFICATION_ID);
+        }
+    }
+
+    @Override
+    public void showProgressIndicator(boolean active, int percentage) {
+        if(active){
+            progressBar.setVisibility(View.VISIBLE);
+        }else{
+            progressBar.setVisibility(View.GONE);
         }
     }
 

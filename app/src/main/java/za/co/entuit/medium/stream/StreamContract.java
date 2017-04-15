@@ -10,6 +10,7 @@ public  interface StreamContract {
         void notifyStreamStarted();
         void notifyStreamStopped();
         void clearStreamNotifications();
+        void showProgressIndicator(boolean active, int percentage);
 
     }
     interface UserActionsListener{
