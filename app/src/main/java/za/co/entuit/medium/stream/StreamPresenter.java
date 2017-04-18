@@ -15,20 +15,20 @@ public class StreamPresenter implements StreamContract.UserActionsListener {
     private StreamService streamService;
     private MediaPlayer.OnBufferingUpdateListener bufferingUpdateListener;
     private MediaPlayer.OnErrorListener errorListener;
-    private  MediaPlayer.OnCompletionListener completionListener;
 
     public StreamPresenter(StreamContract.View view) {
         this.view = view;
         initListeners();
-        streamService = new StreamServiceImpl(errorListener,bufferingUpdateListener,completionListener);
+        streamService = new StreamServiceImpl(errorListener,bufferingUpdateListener);
     }
     @Override
-    public void play() {
+    public void play(String streamUrl) {
         view.showProgressIndicator(true, 0);
-        streamService.playStream(new StreamService.StartStreamCallback() {
+        streamService.playStream(streamUrl,new StreamService.StartStreamCallback() {
+
             @Override
             public void onStreamStarted() {
-               // view.showProgressIndicator(false, 100);
+                view.showProgressIndicator(false, 100);
                 view.notifyStreamStarted();
             }
 
@@ -66,9 +66,9 @@ public class StreamPresenter implements StreamContract.UserActionsListener {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
 
-                if(percent ==100){
+              /*  if(percent ==100){
                     view.showProgressIndicator(false, percent);
-                }
+                }*/
             }
         };
         errorListener = new MediaPlayer.OnErrorListener() {
@@ -84,12 +84,6 @@ public class StreamPresenter implements StreamContract.UserActionsListener {
             }
         };
 
-        completionListener = new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                view.showProgressIndicator(false, 100);
-            }
-        };
     }
 
 

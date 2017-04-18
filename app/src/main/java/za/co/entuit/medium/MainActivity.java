@@ -1,5 +1,6 @@
 package za.co.entuit.medium;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 
 import za.co.entuit.medium.articles.ArticlesFragment;
 import za.co.entuit.medium.stream.StreamFragment;
+import za.co.entuit.medium.util.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivity(i);
             return true;
         }
 

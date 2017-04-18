@@ -14,7 +14,7 @@ public  interface StreamContract {
 
     }
     interface UserActionsListener{
-        void play();
+        void play(String streamUrl);
         void stop();
         void shutdown();
     }

@@ -8,36 +8,29 @@ import java.io.IOException;
 
 import static android.media.MediaPlayer.*;
 
-/**
- * Created by RVukela on 2017/04/14.
- */
 
 public class StreamServiceImpl implements StreamService, OnPreparedListener{
-    private static final String ACTION_PLAY = "com.example.action.PLAY";
     private MediaPlayer mediaPlayer = null;
-    private static final String url = "http://capeant.antfarm.co.za:8000/yarona";
     private  OnErrorListener errorListener;
     private OnBufferingUpdateListener bufferingUpdateListener;
-    private  OnCompletionListener completionListener;
+    private StartStreamCallback startStreamCallback;
 
-    public StreamServiceImpl(OnErrorListener errorListener, OnBufferingUpdateListener bufferingUpdateListener,
-                             OnCompletionListener completionListener){
+    public StreamServiceImpl(OnErrorListener errorListener, OnBufferingUpdateListener bufferingUpdateListener){
         this.errorListener = errorListener;
         this.bufferingUpdateListener = bufferingUpdateListener;
-        this.completionListener = completionListener;
     }
 
     private void shutdown(){
         mediaPlayer.stop();
         mediaPlayer.release();
+        mediaPlayer = null;
     }
 
-    private void  init(){
+    private void  init(String url){
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setOnBufferingUpdateListener(bufferingUpdateListener);
         mediaPlayer.setOnErrorListener(errorListener);
-        mediaPlayer.setOnCompletionListener(completionListener);
         try {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
@@ -52,20 +45,25 @@ public class StreamServiceImpl implements StreamService, OnPreparedListener{
     /** Called when MediaPlayer is ready */
     public void onPrepared(MediaPlayer player) {
         player.start();
+        startStreamCallback.onStreamStarted();
     }
 
     @Override
-    public void playStream(StartStreamCallback callback) {
+    public void playStream(String streamUrl, StartStreamCallback callback) {
         if(mediaPlayer == null)
-            init();
+            init(streamUrl);
 
-        mediaPlayer.start();
-        callback.onStreamStarted();
+        this.startStreamCallback = callback;
+        if(!mediaPlayer.isPlaying()){
+            mediaPlayer.start();
+        }
+
+
     }
 
     @Override
     public void stopStream(StopStreamCallback callback) {
-        mediaPlayer.stop();
+       shutdown();
         callback.onStreamStopped();
     }
 

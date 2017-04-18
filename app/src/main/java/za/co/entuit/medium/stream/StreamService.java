@@ -15,6 +15,6 @@ public interface StreamService {
         void onError();
     }
 
-    void playStream(StartStreamCallback callback);
+    void playStream(String streamUrl, StartStreamCallback callback);
     void stopStream(StopStreamCallback callback);
 }
