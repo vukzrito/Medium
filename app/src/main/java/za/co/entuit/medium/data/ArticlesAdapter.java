@@ -41,7 +41,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Article article = articles.get(position);
         holder.titleTextView.setText(article.getTitle());
-        Picasso.with(context).load("https://upload.wikimedia.org/wikipedia/commons/8/87/Jacob_Zuma_2014_%28cropped%29.jpg")
+        Picasso.with(context).load(article.getImageUrl())
                 .error(R.drawable.ic_my_location_black_24dp)
                 .fit()
                 .into(holder.imageView);
