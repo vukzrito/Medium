@@ -24,14 +24,16 @@ public class ArticlesPresenter implements ArticlesContract.UserActionsListener {
         articlesRepository.loadArticles(new ArticlesRepository.LoadArticlesCallback() {
             @Override
             public void onLoaded(List<Article> articles) {
-                view.showProgressIndicator(false);
                 view.showArticles(articles);
+                view.showProgressIndicator(false);
+
             }
 
             @Override
             public void onError(String errorMessage) {
-                view.showProgressIndicator(false);
                 view.showErrorMessage(errorMessage);
+                view.showProgressIndicator(false);
+
             }
         });
     }
