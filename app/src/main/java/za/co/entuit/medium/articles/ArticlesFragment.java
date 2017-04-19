@@ -87,7 +87,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
                     public void onClick(View v) {
                         userActionsListener.loadArticles(true);
                     }
-                });
+                }).show();
     }
 
     @Override
