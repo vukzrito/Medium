@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import za.co.entuit.medium.Injection;
 import za.co.entuit.medium.R;
 import za.co.entuit.medium.data.Article;
 import za.co.entuit.medium.data.ArticlesAdapter;
-import za.co.entuit.medium.data.ArticlesRepositoryImpl;
 
 /**
  * Created by RVukela on 2017/04/12.
@@ -46,7 +46,7 @@ public class ArticlesFragment extends Fragment implements ArticlesContract.View 
             }
         };
         View rootView = inflater.inflate(R.layout.fragment_articles, container, false);
-        userActionsListener = new ArticlesPresenter(this, new ArticlesRepositoryImpl());
+        userActionsListener = new ArticlesPresenter(this, Injection.provideArticlesRepository());
         articlesAdapter =new ArticlesAdapter(articleItemListener);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.articles_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

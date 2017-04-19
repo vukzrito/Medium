@@ -1,4 +1,4 @@
-package za.co.entuit.medium.util;
+package za.co.entuit.medium.settings;
 
 
 import android.annotation.TargetApi;

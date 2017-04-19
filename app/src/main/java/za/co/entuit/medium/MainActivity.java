@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import za.co.entuit.medium.articles.ArticlesFragment;
 import za.co.entuit.medium.stream.StreamFragment;
-import za.co.entuit.medium.util.SettingsActivity;
+import za.co.entuit.medium.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
